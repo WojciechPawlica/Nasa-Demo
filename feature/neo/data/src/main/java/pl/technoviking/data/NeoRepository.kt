@@ -14,6 +14,7 @@ import pl.technoviking.data.model.mapper.toNeoSimple
 import pl.technoviking.local.neo.NeoDao
 import pl.technoviking.local.neo.NeoEntity
 import pl.technoviking.remote.api.NeoApi
+import retrofit2.HttpException
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
@@ -33,12 +34,24 @@ class NeoRepositoryImpl @Inject constructor(
 
     override suspend fun fetchData(startDate: LocalDate, endDate: LocalDate) {
         withContext(ioDispatcher) {
-            val response = remoteDataSource.getNearEarthObjectsResponse(
-                startDate.format(dateTimeFormatter),
-                endDate.format(dateTimeFormatter)
-            )
-            localDataSource.clear()
-            localDataSource.upsert(response.toLocal())
+            runCatching {
+                val response = remoteDataSource.getNearEarthObjectsResponse(
+                    startDate.format(dateTimeFormatter),
+                    endDate.format(dateTimeFormatter)
+                )
+                localDataSource.clear()
+                localDataSource.upsert(response.toLocal())
+            }.onFailure {
+                /**
+                 * Temporary solution just to get a detailed error body
+                 * TODO: Handle errors in CallAdapter
+                 */
+                throw if (it is HttpException) {
+                    Exception(it.response()?.errorBody()?.string())
+                } else {
+                    it
+                }
+            }
         }
     }
 

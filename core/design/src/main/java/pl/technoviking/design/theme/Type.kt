@@ -1,4 +1,4 @@
-package pl.technoviking.nasademoapp.ui.theme
+package pl.technoviking.design.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

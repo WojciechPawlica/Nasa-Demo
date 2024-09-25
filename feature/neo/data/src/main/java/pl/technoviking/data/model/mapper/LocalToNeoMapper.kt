@@ -17,8 +17,8 @@ import pl.technoviking.local.neo.model.RelativeVelocityLocal
 internal fun NeoEntity.toNeoSimple() = NeoSimple(
     id = id,
     name = name,
-    diameterMinKm = estimatedDiameter.kilometers.estimatedDiameterMin.toString(),
-    diameterMaxKm = estimatedDiameter.kilometers.estimatedDiameterMax.toString(),
+    diameterMinKm = estimatedDiameter.kilometers.estimatedDiameterMin,
+    diameterMaxKm = estimatedDiameter.kilometers.estimatedDiameterMax,
     isDangerous = isPotentiallyHazardousAsteroid
 )
 

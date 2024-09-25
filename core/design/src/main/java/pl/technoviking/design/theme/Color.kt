@@ -1,4 +1,4 @@
-package pl.technoviking.nasademoapp.ui.theme
+package pl.technoviking.design.theme
 
 import androidx.compose.ui.graphics.Color
 

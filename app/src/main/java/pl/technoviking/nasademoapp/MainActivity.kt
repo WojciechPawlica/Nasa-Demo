@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import pl.technoviking.nasademoapp.ui.theme.NasaDemoAppTheme
+import pl.technoviking.design.theme.NasaDemoAppTheme
 import pl.technoviking.presentation.NeoGraphDest
 import pl.technoviking.presentation.neoGraph
 
@@ -29,7 +29,7 @@ class MainActivity : ComponentActivity() {
                         navController = navController,
                         startDestination = NeoGraphDest
                     ) {
-                        neoGraph()
+                        neoGraph(navController)
                     }
                 }
             }

@@ -10,7 +10,7 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        minSdk = 24
+        minSdk = 26
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -46,7 +46,7 @@ dependencies {
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
 
-    implementation(libs.retrofit.client)
+    api(libs.retrofit.client)
     implementation(libs.retrofit.converter.gson)
     implementation(platform(libs.okhttp.bom))
     implementation(libs.okhttp.client)
