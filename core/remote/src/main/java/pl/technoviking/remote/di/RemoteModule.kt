@@ -5,7 +5,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import pl.technoviking.remote.ApiKeyInterceptor
 import pl.technoviking.remote.Config
-import pl.technoviking.remote.api.NearEarthObjectsApi
+import pl.technoviking.remote.api.NeoApi
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -39,5 +39,5 @@ object RemoteModule {
     @Singleton
     fun provideCharactersApi(
         retrofit: Retrofit
-    ): NearEarthObjectsApi = retrofit.create(NearEarthObjectsApi::class.java)
+    ): NeoApi = retrofit.create(NeoApi::class.java)
 }

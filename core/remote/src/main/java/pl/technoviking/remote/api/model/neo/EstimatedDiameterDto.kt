@@ -3,18 +3,18 @@ package pl.technoviking.remote.api.model.neo
 
 import com.google.gson.annotations.SerializedName
 
-data class EstimatedDiameter(
+data class EstimatedDiameterDto(
     @SerializedName("kilometers")
-    val kilometers: EstimatedDiameterValues,
+    val kilometers: EstimatedDiameterValuesDto,
     @SerializedName("meters")
-    val meters: EstimatedDiameterValues,
+    val meters: EstimatedDiameterValuesDto,
     @SerializedName("miles")
-    val miles: EstimatedDiameterValues,
+    val miles: EstimatedDiameterValuesDto,
     @SerializedName("feet")
-    val feet: EstimatedDiameterValues
+    val feet: EstimatedDiameterValuesDto
 )
 
-data class EstimatedDiameterValues(
+data class EstimatedDiameterValuesDto(
     @SerializedName("estimated_diameter_min")
     val estimatedDiameterMin: Double,
     @SerializedName("estimated_diameter_max")

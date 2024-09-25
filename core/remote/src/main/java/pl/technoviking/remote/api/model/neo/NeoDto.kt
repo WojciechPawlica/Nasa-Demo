@@ -4,7 +4,7 @@ package pl.technoviking.remote.api.model.neo
 import com.google.gson.annotations.SerializedName
 import pl.technoviking.remote.api.model.Links
 
-data class NearEarthObject(
+data class NeoDto(
     @SerializedName("links")
     val links: Links,
     @SerializedName("id")
@@ -18,11 +18,11 @@ data class NearEarthObject(
     @SerializedName("absolute_magnitude_h")
     val absoluteMagnitudeH: Double,
     @SerializedName("estimated_diameter")
-    val estimatedDiameter: EstimatedDiameter,
+    val estimatedDiameter: EstimatedDiameterDto,
     @SerializedName("is_potentially_hazardous_asteroid")
     val isPotentiallyHazardousAsteroid: Boolean,
     @SerializedName("close_approach_data")
-    val closeApproachData: List<CloseApproachData>,
+    val closeApproachData: List<CloseApproachDataDto>,
     @SerializedName("is_sentry_object")
     val isSentryObject: Boolean
 )

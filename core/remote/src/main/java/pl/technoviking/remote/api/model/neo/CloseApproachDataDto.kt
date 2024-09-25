@@ -3,7 +3,7 @@ package pl.technoviking.remote.api.model.neo
 
 import com.google.gson.annotations.SerializedName
 
-data class CloseApproachData(
+data class CloseApproachDataDto(
     @SerializedName("close_approach_date")
     val closeApproachDate: String,
     @SerializedName("close_approach_date_full")
@@ -11,14 +11,14 @@ data class CloseApproachData(
     @SerializedName("epoch_date_close_approach")
     val epochDateCloseApproach: Long,
     @SerializedName("relative_velocity")
-    val relativeVelocity: RelativeVelocity,
+    val relativeVelocity: RelativeVelocityDto,
     @SerializedName("miss_distance")
-    val missDistance: MissDistance,
+    val missDistance: MissDistanceDto,
     @SerializedName("orbiting_body")
     val orbitingBody: String
 )
 
-data class RelativeVelocity(
+data class RelativeVelocityDto(
     @SerializedName("kilometers_per_second")
     val kilometersPerSecond: String,
     @SerializedName("kilometers_per_hour")
@@ -27,7 +27,7 @@ data class RelativeVelocity(
     val milesPerHour: String
 )
 
-data class MissDistance(
+data class MissDistanceDto(
     @SerializedName("astronomical")
     val astronomical: String,
     @SerializedName("lunar")
