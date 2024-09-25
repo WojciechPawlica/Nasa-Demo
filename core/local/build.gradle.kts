@@ -3,10 +3,11 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     id("kotlin-kapt")
     alias(libs.plugins.hilt.android)
+    alias(libs.plugins.room)
 }
 
 android {
-    namespace = "pl.technoviking.remote"
+    namespace = "pl.technoviking.local"
     compileSdk = 34
 
     defaultConfig {
@@ -32,6 +33,9 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    room {
+        schemaDirectory("$projectDir/schemas")
+    }
 }
 
 dependencies {
@@ -46,11 +50,11 @@ dependencies {
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
 
-    implementation(libs.retrofit.client)
-    implementation(libs.retrofit.converter.gson)
-    implementation(platform(libs.okhttp.bom))
-    implementation(libs.okhttp.client)
-    implementation(libs.okhttp.logging.interceptor)
+    implementation(libs.room.runtime)
+    kapt(libs.room.compiler)
+    implementation(libs.room.ktx)
+
+    implementation(libs.gson)
 }
 
 kapt {

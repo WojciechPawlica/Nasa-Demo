@@ -17,3 +17,23 @@ data class CloseApproachData(
     @SerializedName("orbiting_body")
     val orbitingBody: String
 )
+
+data class RelativeVelocity(
+    @SerializedName("kilometers_per_second")
+    val kilometersPerSecond: String,
+    @SerializedName("kilometers_per_hour")
+    val kilometersPerHour: String,
+    @SerializedName("miles_per_hour")
+    val milesPerHour: String
+)
+
+data class MissDistance(
+    @SerializedName("astronomical")
+    val astronomical: String,
+    @SerializedName("lunar")
+    val lunar: String,
+    @SerializedName("kilometers")
+    val kilometers: String,
+    @SerializedName("miles")
+    val miles: String
+)
