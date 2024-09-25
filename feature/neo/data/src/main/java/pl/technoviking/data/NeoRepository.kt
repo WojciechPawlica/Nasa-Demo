@@ -43,9 +43,10 @@ class NeoRepositoryImpl @Inject constructor(
     }
 
     override fun observeNeoSimple(): Flow<Map<String, List<NeoSimple>>> =
-        localDataSource.observe().map { list -> list.groupBy({ it.date }, NeoEntity::toNeoSimple) }
+        localDataSource.observe()
+            .map { list -> list.groupBy({ it.date }, NeoEntity::toNeoSimple).toSortedMap() }
 
-    override suspend fun getNeoExtended(id: String) : NeoExtended = withContext(ioDispatcher) {
+    override suspend fun getNeoExtended(id: String): NeoExtended = withContext(ioDispatcher) {
         localDataSource.getById(id).toNeoExtended()
     }
 }
