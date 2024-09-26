@@ -50,7 +50,8 @@ dependencies {
     implementation(libs.retrofit.converter.gson)
     implementation(platform(libs.okhttp.bom))
     implementation(libs.okhttp.client)
-    implementation(libs.okhttp.logging.interceptor)
+    implementation(libs.okhttp.logginginterceptor)
+    testImplementation(libs.okhttp.mockwebserver)
 }
 
 kapt {

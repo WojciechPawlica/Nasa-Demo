@@ -48,6 +48,9 @@ dependencies {
 
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
+
+    testImplementation(libs.io.mockk)
+    testImplementation(libs.coroutines.test)
 }
 
 kapt {

@@ -68,6 +68,9 @@ dependencies {
     implementation(libs.hilt.navigation.compose)
     implementation(libs.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
+
+    testImplementation(libs.io.mockk)
+    testImplementation(libs.coroutines.test)
 }
 
 kapt {
