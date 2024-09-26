@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="start_date">Start date</string>
+    <string name="end_date">End date</string>
+    <string name="fetch_data">Fetch data</string>
+    <string name="name">Name</string>
+    <string name="diameter">Diameter</string>
+    <string name="dangerous">Dangerous</string>
+    <string name="not_dangerous">Not dangerous</string>
+    <string name="nothing_to_show">Nothing to show</string>
+</resources>

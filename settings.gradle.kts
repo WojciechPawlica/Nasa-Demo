@@ -21,4 +21,9 @@ dependencyResolutionManagement {
 
 rootProject.name = "Nasa Demo App"
 include(":app")
- 
+include(":core:remote")
+include(":core:local")
+include(":feature:neo:data")
+include(":core:common")
+include(":feature:neo:presentation")
+include(":core:design")
