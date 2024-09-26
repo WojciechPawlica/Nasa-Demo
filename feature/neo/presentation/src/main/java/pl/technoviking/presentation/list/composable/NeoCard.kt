@@ -12,9 +12,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import pl.technoviking.data.model.NeoSimple
 import pl.technoviking.design.R
+import kotlin.math.truncate
 
 @Composable
 fun NeoCard(modifier: Modifier = Modifier, item: NeoSimple, onCardClick: (String) -> Unit) {
@@ -35,7 +39,12 @@ fun NeoCard(modifier: Modifier = Modifier, item: NeoSimple, onCardClick: (String
                     style = MaterialTheme.typography.titleMedium
                 )
                 Text(
-                    "${String.format("%.2f", item.diameterMinKm)} - ${String.format("%.2f", item.diameterMaxKm)} [km]",
+                    "${String.format("%.2f", item.diameterMinKm)} - ${
+                        String.format(
+                            "%.2f",
+                            item.diameterMaxKm
+                        )
+                    } [km]",
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
@@ -54,4 +63,23 @@ fun NeoCard(modifier: Modifier = Modifier, item: NeoSimple, onCardClick: (String
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun NeoCardPreview(
+    @PreviewParameter(NeoCardPreviewParameterProvider::class) isDangerous: Boolean
+) {
+    NeoCard(item = NeoSimple(
+        id = "1",
+        name = "Monster",
+        diameterMinKm = 1.23,
+        diameterMaxKm = 2.34,
+        isDangerous = isDangerous
+
+    ), onCardClick = {})
+}
+
+private class NeoCardPreviewParameterProvider : PreviewParameterProvider<Boolean> {
+    override val values = sequenceOf(true, false)
 }

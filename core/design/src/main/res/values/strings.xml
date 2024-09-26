@@ -9,4 +9,5 @@
     <string name="diameter">Diameter</string>
     <string name="dangerous">Dangerous</string>
     <string name="not_dangerous">Not dangerous</string>
+    <string name="nothing_to_show">Nothing to show</string>
 </resources>

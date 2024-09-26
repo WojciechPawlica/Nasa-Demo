@@ -9,10 +9,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import kotlinx.serialization.Serializable
+import pl.technoviking.data.model.EstimatedDiameter
+import pl.technoviking.data.model.EstimatedDiameterValues
+import pl.technoviking.data.model.NeoExtended
 import pl.technoviking.design.R
 
 @Serializable
@@ -35,10 +39,43 @@ private fun NeoDetailsContent(state: NeoDetailsUiState) {
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = dimensionResource(id = R.dimen.default_horizontal_padding))
+
             .verticalScroll(rememberScrollState())
     ) {
         Text(text = state.neoExtended.prettyPrint())
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun NeoDetailsContentPreview() {
+    NeoDetailsContent(
+        state = NeoDetailsUiState(
+            NeoExtended(
+                id = "1",
+                name = "Asteroid",
+                absoluteMagnitudeH = 198.199,
+                estimatedDiameter = EstimatedDiameter(
+                    kilometers = EstimatedDiameterValues(
+                        estimatedDiameterMin = 200.201,
+                        estimatedDiameterMax = 202.203
+                    ), meters = EstimatedDiameterValues(
+                        estimatedDiameterMin = 204.205,
+                        estimatedDiameterMax = 206.207
+                    ), miles = EstimatedDiameterValues(
+                        estimatedDiameterMin = 208.209,
+                        estimatedDiameterMax = 210.211
+                    ), feet = EstimatedDiameterValues(
+                        estimatedDiameterMin = 212.213,
+                        estimatedDiameterMax = 214.215
+                    )
+                ),
+                isPotentiallyHazardousAsteroid = false,
+                closeApproachData = listOf(),
+                isSentryObject = false
+            )
+        )
+    )
 }
 
 /**

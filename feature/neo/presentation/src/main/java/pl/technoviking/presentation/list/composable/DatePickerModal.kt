@@ -10,7 +10,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import pl.technoviking.design.R
 import java.time.LocalDate
 
@@ -34,20 +37,37 @@ fun DatePickerModal(
             })
 
     DatePickerDialog(
+        modifier = Modifier.testTag(TAG_DATEPICKER_DIALOG),
         onDismissRequest = onDismiss,
         confirmButton = {
-            TextButton(onClick = {
-                onDateSelected(datePickerState.selectedDateMillis ?: return@TextButton)
-            }) {
+            TextButton(
+                modifier = Modifier.testTag(TAG_CONFIRM_BUTTON),
+                onClick = {
+                    onDateSelected(datePickerState.selectedDateMillis ?: return@TextButton)
+                }) {
                 Text(stringResource(R.string.ok).uppercase())
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
+            TextButton(
+                modifier = Modifier.testTag(TAG_DISMISS_BUTTON),
+                onClick = onDismiss
+            ) {
                 Text(stringResource(R.string.cancel).uppercase())
             }
         }
     ) {
-        DatePicker(state = datePickerState)
+        DatePicker(modifier = Modifier.testTag(TAG_DATEPICKER), state = datePickerState)
     }
 }
+
+@Preview
+@Composable
+fun DatePickerModalPreview() {
+    DatePickerModal(null, {}, {})
+}
+
+internal const val TAG_DATEPICKER_DIALOG = "tag_datepicker_dialog"
+internal const val TAG_DATEPICKER = "tag_datepicker"
+internal const val TAG_CONFIRM_BUTTON = "tag_confirm_button"
+internal const val TAG_DISMISS_BUTTON = "tag_dismiss_button"

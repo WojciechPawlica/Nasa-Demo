@@ -16,11 +16,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import pl.technoviking.design.R
+import pl.technoviking.design.theme.NasaDemoAppTheme
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -43,20 +46,20 @@ fun DatePickerSection(
             horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.default_arrangement_space))
         ) {
             DatePickerButton(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f).testTag(TAG_START_DATE_BUTTON),
                 dateEpoch = startDate,
                 placeholderText = stringResource(R.string.start_date),
                 onDateClick = onStartDateClick,
             )
             DatePickerButton(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f).testTag(TAG_END_DATE_BUTTON),
                 dateEpoch = endDate,
                 placeholderText = stringResource(R.string.end_date),
                 onDateClick = onEndDateClick,
             )
         }
         Button(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().testTag(TAG_FETCH_BUTTON),
             onClick = onFetchButtonClick,
             enabled = startDate != null && endDate != null
         ) {
@@ -100,6 +103,22 @@ private fun DatePickerButton(
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+fun DatePickerSectionPreview() {
+    DatePickerSection(0L, null, {}, {}, {})
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DatePickerButtonPreview() {
+    DatePickerButton(dateEpoch = 0L, placeholderText = "Start date", onDateClick = {})
+}
+
 private fun formatDate(dateEpoch: Long): String =
     Instant.ofEpochMilli(dateEpoch).atZone(ZoneId.of("UTC"))
         .format(DateTimeFormatter.ISO_LOCAL_DATE)
+
+internal const val TAG_START_DATE_BUTTON = "tag_start_date_button"
+internal const val TAG_END_DATE_BUTTON = "tag_end_date_button"
+internal const val TAG_FETCH_BUTTON = "tag_fetch_button"

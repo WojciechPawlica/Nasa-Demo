@@ -21,12 +21,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import kotlinx.serialization.Serializable
+import pl.technoviking.data.model.NeoSimple
 import pl.technoviking.design.R
 import pl.technoviking.presentation.list.NeoListAction.UiAction
 import pl.technoviking.presentation.list.NeoListAction.UiAction.CardClicked
@@ -99,12 +103,21 @@ private fun NeoListContent(state: NeoListUiState, action: (NeoListAction) -> Uni
                         modifier = Modifier
                             .size(dimensionResource(id = R.dimen.progress_indicator_size))
                             .align(Alignment.Center)
+                            .testTag(TAG_PROGRESS_INDICATOR)
+                    )
+                }
+
+                state.neos.isEmpty() -> {
+                    Text(
+                        modifier = Modifier.align(Alignment.Center).testTag(TAG_NOTHING_TO_SHOW),
+                        text = stringResource(id = R.string.nothing_to_show),
+                        style = MaterialTheme.typography.bodyLarge,
                     )
                 }
 
                 else -> {
                     LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier.fillMaxSize().testTag(TAG_LIST),
                         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.default_arrangement_space))
                     ) {
                         state.neos.forEach { entry ->
@@ -140,3 +153,61 @@ private fun NeoListContent(state: NeoListUiState, action: (NeoListAction) -> Uni
             onFetchButtonClick = { action(FetchData) })
     }
 }
+
+@Preview(showBackground = true)
+@Composable
+fun NeoListContentPreview() {
+    NeoListContent(
+        state = NeoListUiState(
+            neos = mapOf(
+                "1970-01-01" to listOf(
+                    NeoSimple(
+                        id = "1",
+                        name = "Asteroid",
+                        diameterMinKm = 176.177,
+                        diameterMaxKm = 178.179,
+                        isDangerous = false
+                    ),
+                    NeoSimple(
+                        id = "2",
+                        name = "Comet",
+                        diameterMinKm = 176.177,
+                        diameterMaxKm = 178.179,
+                        isDangerous = false
+                    ),
+                    NeoSimple(
+                        id = "3",
+                        name = "Moon",
+                        diameterMinKm = 176.177,
+                        diameterMaxKm = 178.179,
+                        isDangerous = true
+                    ),
+                    NeoSimple(
+                        id = "4",
+                        name = "Asteroid",
+                        diameterMinKm = 176.177,
+                        diameterMaxKm = 178.179,
+                        isDangerous = false
+                    ),
+                    NeoSimple(
+                        id = "5",
+                        name = "Comet",
+                        diameterMinKm = 176.177,
+                        diameterMaxKm = 178.179,
+                        isDangerous = false
+                    ),
+                )
+            ),
+            isLoading = false,
+            errorMessage = null,
+            datePicker = null,
+            startDate = 0L,
+            endDate = null
+
+        )
+    ) {}
+}
+
+internal const val TAG_NOTHING_TO_SHOW = "tag_nothing_to_show"
+internal const val TAG_PROGRESS_INDICATOR = "tag_progress_indicator"
+internal const val TAG_LIST = "tag_list"

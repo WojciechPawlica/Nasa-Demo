@@ -13,7 +13,7 @@ android {
     defaultConfig {
         minSdk = 26
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "pl.technoviking.common.testing.HiltTestRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
 
@@ -64,6 +64,8 @@ dependencies {
 
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
+    androidTestImplementation(libs.hilt.android.testing)
+    kaptAndroidTest(libs.hilt.android.compiler)
 
     implementation(libs.hilt.navigation.compose)
     implementation(libs.navigation.compose)
