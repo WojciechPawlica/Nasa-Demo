@@ -9,7 +9,14 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
 import kotlinx.coroutines.withContext
 import pl.technoviking.common.di.IoDispatcher
 import pl.technoviking.common.di.MainDispatcher
@@ -29,17 +36,16 @@ data class NeoListUiState(
     val endDate: Long? = null,
 )
 
-sealed interface NeoListAction {
-    sealed interface UiAction : NeoListAction {
-        data class CardClicked(val id: String) : UiAction
-    }
+sealed interface NeoListEvent {
+    data class OnShowDatePickerButtonClicked(val datePicker: DatePicker) : NeoListEvent
+    data object OnDismissDatePickerButtonClicked : NeoListEvent
+    data class OnConfirmDateButtonClicked(val datePicker: DatePicker, val millis: Long) : NeoListEvent
+    data object OnFetchDataButtonClicked : NeoListEvent
+    data class OnCardClicked(val id: String) : NeoListEvent
+}
 
-    sealed interface VmAction : NeoListAction {
-        data class ShowDatePicker(val datePicker: DatePicker) : VmAction
-        data object DismissDatePicker : VmAction
-        data class DatePicked(val datePicker: DatePicker, val millis: Long) : VmAction
-        data object FetchData : VmAction
-    }
+sealed interface NeoListEffect {
+    data class NavToCardDetails(val id: String) : NeoListEffect
 }
 
 @HiltViewModel
@@ -51,6 +57,9 @@ class NeoListViewModel @Inject constructor(
 
     var state by mutableStateOf(NeoListUiState())
         private set
+
+    private val _effect = MutableSharedFlow<NeoListEffect>()
+    val effect = _effect.asSharedFlow()
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Log.e(NeoListViewModel::class.simpleName, throwable.message, throwable)
@@ -68,13 +77,31 @@ class NeoListViewModel @Inject constructor(
         }
     }
 
-    fun handleAction(action: NeoListAction.VmAction) {
+    fun handleAction(action: NeoListEvent) {
         when (action) {
-            is NeoListAction.VmAction.ShowDatePicker -> showDatePicker(action.datePicker)
-            NeoListAction.VmAction.DismissDatePicker -> dismissDatePicker()
-            is NeoListAction.VmAction.DatePicked -> datePicked(action.datePicker, action.millis)
-            NeoListAction.VmAction.FetchData -> fetchData()
+            is NeoListEvent.OnShowDatePickerButtonClicked -> showDatePicker(action.datePicker)
+            NeoListEvent.OnDismissDatePickerButtonClicked -> dismissDatePicker()
+            is NeoListEvent.OnConfirmDateButtonClicked -> datePicked(
+                action.datePicker,
+                action.millis
+            )
+
+            NeoListEvent.OnFetchDataButtonClicked -> fetchData()
+            is NeoListEvent.OnCardClicked -> {
+                sendAnalytics()
+                navToCardDetails(action.id)
+            }
         }
+    }
+
+    private fun navToCardDetails(id: String) {
+        viewModelScope.launch {
+            _effect.emit(NeoListEffect.NavToCardDetails(id))
+        }
+    }
+
+    private fun sendAnalytics() {
+        // Sand analytics
     }
 
     private fun showDatePicker(datePicker: DatePicker) {
@@ -109,6 +136,25 @@ class NeoListViewModel @Inject constructor(
                 state = state.copy(isLoading = false)
             }
         }
+    }
+
+    private fun fetchDataFlow() {
+        repository.fetchDataFlow(
+            state.startDate?.let { getLocalDate(it) }
+                ?: throw IllegalStateException("Start date missing"),
+            state.endDate?.let { getLocalDate(it) }
+                ?: throw IllegalStateException("End date missing"),
+        ).onStart {
+            state = state.copy(isLoading = true, errorMessage = null)
+        }.onEach {
+            state = if (it) {
+                state.copy(isLoading = false)
+            } else {
+                state.copy(errorMessage = "Error", isLoading = false)
+            }
+        }.catch {
+            state = state.copy(errorMessage = "Error", isLoading = false)
+        }.launchIn(viewModelScope + mainDispatcher + exceptionHandler)
     }
 
     private fun getLocalDate(epoch: Long): LocalDate =

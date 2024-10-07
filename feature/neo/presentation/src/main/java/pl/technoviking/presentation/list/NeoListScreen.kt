@@ -18,6 +18,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,13 +33,11 @@ import androidx.navigation.compose.composable
 import kotlinx.serialization.Serializable
 import pl.technoviking.data.model.NeoSimple
 import pl.technoviking.design.R
-import pl.technoviking.presentation.list.NeoListAction.UiAction
-import pl.technoviking.presentation.list.NeoListAction.UiAction.CardClicked
-import pl.technoviking.presentation.list.NeoListAction.VmAction
-import pl.technoviking.presentation.list.NeoListAction.VmAction.DatePicked
-import pl.technoviking.presentation.list.NeoListAction.VmAction.DismissDatePicker
-import pl.technoviking.presentation.list.NeoListAction.VmAction.FetchData
-import pl.technoviking.presentation.list.NeoListAction.VmAction.ShowDatePicker
+import pl.technoviking.presentation.list.NeoListEvent.OnCardClicked
+import pl.technoviking.presentation.list.NeoListEvent.OnConfirmDateButtonClicked
+import pl.technoviking.presentation.list.NeoListEvent.OnDismissDatePickerButtonClicked
+import pl.technoviking.presentation.list.NeoListEvent.OnFetchDataButtonClicked
+import pl.technoviking.presentation.list.NeoListEvent.OnShowDatePickerButtonClicked
 import pl.technoviking.presentation.list.composable.DatePickerModal
 import pl.technoviking.presentation.list.composable.DatePickerSection
 import pl.technoviking.presentation.list.composable.NeoCard
@@ -57,26 +56,26 @@ internal fun NeoListScreen(
     viewModel: NeoListViewModel = hiltViewModel(),
     navToDetails: (String) -> Unit
 ) {
-    NeoListContent(state = viewModel.state, action = { action ->
-        when (action) {
-            is VmAction -> viewModel.handleAction(action)
-            is UiAction -> when (action) {
-                is CardClicked -> navToDetails(action.id)
+    LaunchedEffect(viewModel.effect) {
+        viewModel.effect.collect { effect ->
+            when (effect) {
+                is NeoListEffect.NavToCardDetails -> navToDetails(effect.id)
             }
         }
-    })
+    }
+    NeoListContent(state = viewModel.state, action = { viewModel.handleAction(it) })
 }
 
 @Composable
-private fun NeoListContent(state: NeoListUiState, action: (NeoListAction) -> Unit) {
+private fun NeoListContent(state: NeoListUiState, action: (NeoListEvent) -> Unit) {
     state.datePicker?.let { datePicker ->
         DatePickerModal(
             initialDate = when (datePicker) {
                 DatePicker.START_DATE -> state.startDate
                 DatePicker.END_DATE -> state.endDate
             },
-            onDateSelected = { action(DatePicked(datePicker, it)) },
-            onDismiss = { action(DismissDatePicker) })
+            onDateSelected = { action(OnConfirmDateButtonClicked(datePicker, it)) },
+            onDismiss = { action(OnDismissDatePickerButtonClicked) })
     }
     Column(
         modifier = Modifier
@@ -109,7 +108,9 @@ private fun NeoListContent(state: NeoListUiState, action: (NeoListAction) -> Uni
 
                 state.neos.isEmpty() -> {
                     Text(
-                        modifier = Modifier.align(Alignment.Center).testTag(TAG_NOTHING_TO_SHOW),
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .testTag(TAG_NOTHING_TO_SHOW),
                         text = stringResource(id = R.string.nothing_to_show),
                         style = MaterialTheme.typography.bodyLarge,
                     )
@@ -117,7 +118,9 @@ private fun NeoListContent(state: NeoListUiState, action: (NeoListAction) -> Uni
 
                 else -> {
                     LazyColumn(
-                        modifier = Modifier.fillMaxSize().testTag(TAG_LIST),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .testTag(TAG_LIST),
                         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.default_arrangement_space))
                     ) {
                         state.neos.forEach { entry ->
@@ -135,7 +138,7 @@ private fun NeoListContent(state: NeoListUiState, action: (NeoListAction) -> Uni
                                 }
                             }
                             items(items = entry.value, key = { it.id }) { item ->
-                                NeoCard(item = item) { action(CardClicked(item.id)) }
+                                NeoCard(item = item) { action(OnCardClicked(item.id)) }
                             }
                         }
                     }
@@ -148,9 +151,9 @@ private fun NeoListContent(state: NeoListUiState, action: (NeoListAction) -> Uni
                 .padding(top = 10.dp),
             startDate = state.startDate,
             endDate = state.endDate,
-            onStartDateClick = { action(ShowDatePicker(DatePicker.START_DATE)) },
-            onEndDateClick = { action(ShowDatePicker(DatePicker.END_DATE)) },
-            onFetchButtonClick = { action(FetchData) })
+            onStartDateClick = { action(OnShowDatePickerButtonClicked(DatePicker.START_DATE)) },
+            onEndDateClick = { action(OnShowDatePickerButtonClicked(DatePicker.END_DATE)) },
+            onFetchButtonClick = { action(OnFetchDataButtonClicked) })
     }
 }
 

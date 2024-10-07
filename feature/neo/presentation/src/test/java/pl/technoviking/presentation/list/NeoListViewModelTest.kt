@@ -35,27 +35,27 @@ class NeoListViewModelTest {
 
     @Test
     fun `Test show datepicker dialog`() {
-        viewModel.handleAction(NeoListAction.VmAction.ShowDatePicker(DatePicker.START_DATE))
+        viewModel.handleAction(NeoListEvent.OnShowDatePickerButtonClicked(DatePicker.START_DATE))
         assert(viewModel.state.datePicker == DatePicker.START_DATE)
 
-        viewModel.handleAction(NeoListAction.VmAction.ShowDatePicker(DatePicker.END_DATE))
+        viewModel.handleAction(NeoListEvent.OnShowDatePickerButtonClicked(DatePicker.END_DATE))
         assert(viewModel.state.datePicker == DatePicker.END_DATE)
     }
 
     @Test
     fun `Test dismiss datepicker dialog`() {
-        viewModel.handleAction(NeoListAction.VmAction.ShowDatePicker(DatePicker.START_DATE))
+        viewModel.handleAction(NeoListEvent.OnShowDatePickerButtonClicked(DatePicker.START_DATE))
         assert(viewModel.state.datePicker == DatePicker.START_DATE)
 
-        viewModel.handleAction(NeoListAction.VmAction.DismissDatePicker)
+        viewModel.handleAction(NeoListEvent.OnDismissDatePickerButtonClicked)
         assert(viewModel.state.datePicker == null)
     }
 
     @Test
     fun `Test date picked`() {
         val epoch = System.currentTimeMillis()
-        viewModel.handleAction(NeoListAction.VmAction.ShowDatePicker(DatePicker.START_DATE))
-        viewModel.handleAction(NeoListAction.VmAction.DatePicked(DatePicker.START_DATE, epoch))
+        viewModel.handleAction(NeoListEvent.OnShowDatePickerButtonClicked(DatePicker.START_DATE))
+        viewModel.handleAction(NeoListEvent.OnConfirmDateButtonClicked(DatePicker.START_DATE, epoch))
 
         assert(viewModel.state.startDate == epoch)
         assert(viewModel.state.datePicker == null)
@@ -64,10 +64,10 @@ class NeoListViewModelTest {
     @Test
     fun `Test fetch data success`() {
         val epoch = System.currentTimeMillis()
-        viewModel.handleAction(NeoListAction.VmAction.DatePicked(DatePicker.START_DATE, epoch))
-        viewModel.handleAction(NeoListAction.VmAction.DatePicked(DatePicker.END_DATE, epoch))
+        viewModel.handleAction(NeoListEvent.OnConfirmDateButtonClicked(DatePicker.START_DATE, epoch))
+        viewModel.handleAction(NeoListEvent.OnConfirmDateButtonClicked(DatePicker.END_DATE, epoch))
 
-        viewModel.handleAction(NeoListAction.VmAction.FetchData)
+        viewModel.handleAction(NeoListEvent.OnFetchDataButtonClicked)
 
         coVerify(exactly = 1) { repository.fetchData(any(), any()) }
     }
@@ -77,10 +77,10 @@ class NeoListViewModelTest {
         val message = "Message"
         coEvery { repository.fetchData(any(), any()) } throws Exception(message)
         val epoch = System.currentTimeMillis()
-        viewModel.handleAction(NeoListAction.VmAction.DatePicked(DatePicker.START_DATE, epoch))
-        viewModel.handleAction(NeoListAction.VmAction.DatePicked(DatePicker.END_DATE, epoch))
+        viewModel.handleAction(NeoListEvent.OnConfirmDateButtonClicked(DatePicker.START_DATE, epoch))
+        viewModel.handleAction(NeoListEvent.OnConfirmDateButtonClicked(DatePicker.END_DATE, epoch))
 
-        viewModel.handleAction(NeoListAction.VmAction.FetchData)
+        viewModel.handleAction(NeoListEvent.OnFetchDataButtonClicked)
 
         coVerify(exactly = 1) { repository.fetchData(any(), any()) }
         assert(viewModel.state.errorMessage == message)
